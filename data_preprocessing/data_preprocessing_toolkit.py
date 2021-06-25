@@ -37,6 +37,7 @@ class DataPreprocessingToolkit(object):
 
     def add_length_of_stay(self, df):
         # Write your code here
+        df.loc[:, "length_of_stay"] = (df["date_to"] - df["date_from"]).dt.days
         return df
 
     def add_book_to_arrival(self, df):
@@ -57,6 +58,7 @@ class DataPreprocessingToolkit(object):
 
     def add_night_price(self, df):
         # Write your code here
+        df.loc[:, "night_price"] = round((df["accomodation_price"]/df["n_rooms"])/df["length_of_stay"], 2)
         return df
 
     def clip_book_to_arrival(self, df):
@@ -125,9 +127,10 @@ class DataPreprocessingToolkit(object):
     def map_length_of_stay_to_nights_buckets(self, df):
         df.loc[:, 'length_of_stay_bucket'] = df['length_of_stay'].apply(lambda x: self.map_value_to_bucket(x, self.nights_buckets))
         return df
-
+            
     def map_night_price_to_room_segment_buckets(self, df):
         # Write your code here
+        df.loc[:,"room_segment"] = df['night_price'].apply(lambda x: self.map_value_to_bucket(x, self.room_segment_buckets))
         return df
 
     # def map_night_price_to_room_segment_buckets(self, df):
@@ -269,3 +272,4 @@ class DataPreprocessingToolkit(object):
                 future_dates.append(date.strftime("%Y-%m-%d"))
 
         return future_dates
+
